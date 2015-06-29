@@ -20,8 +20,11 @@
 #include <string.h>
 #include <ctype.h>
 #include "connection.h"
+#include "driver/include/m2m_wifi.h"
 #include "socket/include/socket.h"
 #include "../../src/main.h"
+//#include "../../src/asf.h"
+
 
 
 int create_socket(const char * portStr)
@@ -60,21 +63,63 @@ int create_socket(const char * portStr)
     return s;
 	*/
 	/** Socket for Tx */
+	
 	SOCKET tx_socket = -1;
 	struct sockaddr_in addr;
-
-	/* Create socket bind LWM2M Client to port .*/
+	// Initialize socket address structure and bind service.
+	addr.sin_family = AF_INET;
+	addr.sin_port = _htons(MAIN_WIFI_M2M_SERVER_PORT);
+	addr.sin_addr.s_addr = _htonl(MAIN_WIFI_M2M_SERVER_IP);	
+/*
+	// Create socket bind LWM2M Client to port .
 	// Create socket for Tx UDP
 	if ((tx_socket = socket(AF_INET, SOCK_DGRAM, 0)) < 0) {
 		printf("Connection: failed to create TX UDP client socket!\r\n");
 	}
 
-	/* Initialize socket address structure and bind service. */
-	addr.sin_family = AF_INET;
-	addr.sin_port = _htons(MAIN_WIFI_M2M_SERVER_PORT);
-	addr.sin_addr.s_addr = _htonl(MAIN_WIFI_M2M_SERVER_IP);
 	bind(tx_socket, (struct sockaddr *)&addr, sizeof(struct sockaddr_in));
+	while (1) {
+		//if (packetCnt2 >= MAIN_WIFI_M2M_PACKET_COUNT) {
+		if (packetCnt2) {
+			packetCnt2 = 0;
+			printf("leshan Server create_socket tx_socket Complete!\r\n");
+			break;
+		}
+	}	
 	
+*/	
+
+	/* while (1) {
+		//if (packetCnt2 >= MAIN_WIFI_M2M_PACKET_COUNT) {
+		if (packetCnt2) {
+			packetCnt2 = 0;
+			printf("connection: create_socket Complete!\r\n");
+			//close(rx_socket);
+			//rx_socket = -1;
+			break;
+		}*/
+
+		//m2m_wifi_handle_events(NULL);
+
+		//if (wifi_connected == M2M_WIFI_CONNECTED) {
+			// Create socket for Rx UDP
+			if (tx_socket < 0) {
+				if ((tx_socket = socket(AF_INET, SOCK_DGRAM, 0)) < 0) {
+					printf("main : failed to create RX UDP Client socket error!\r\n");
+					//continue;
+				}
+				printf("main: socket while tx_socket = (%d)\r\n",tx_socket);
+
+				// Socket bind
+				bind(tx_socket, (struct sockaddr *)&addr, sizeof(struct sockaddr_in));
+				
+			}
+		//}
+	//}
+
+
+	printf("connection: create_socket tx_socket = (%d)\r\n",tx_socket);
+
 	return tx_socket;
 	
 }
@@ -179,25 +224,59 @@ connection_t * connection_create(connection_t * connList,
 	addr_in.sin_addr.s_addr = _htonl(MAIN_WIFI_M2M_SERVER_IP);
 
 	/* Create secure socket */
-	if (tx_socket < 0) {
-		tx_socket = socket(AF_INET, SOCK_DGRAM, 0);
-	}
+	//if (tx_socket < 0) {
+	//	tx_socket = socket(AF_INET, SOCK_DGRAM, 0);
+	//}
 
 	/* Check if socket was created successfully */
-	if (tx_socket == -1) {
-		printf("socket error.\r\n");
-		close(tx_socket);
-		return -1;
-	}
+	//if (tx_socket == -1) {
+	//	printf("socket error.\r\n");
+	//	close(tx_socket);
+	//	return -1;
+	//}
 
 	/* If success, connect to socket */
-	if (connect(tx_socket, (struct sockaddr *)&addr_in, sizeof(struct sockaddr_in)) != SOCK_ERR_NO_ERROR) {
-		printf("connect error.\r\n");
-		return SOCK_ERR_INVALID;
-	}
+	//if (connect(tx_socket, (struct sockaddr *)&addr_in, sizeof(struct sockaddr_in)) != SOCK_ERR_NO_ERROR) {
+		
+		
+		
+	//while (1) {
+
+		//m2m_wifi_handle_events(NULL);
+
+		//if (wifi_connected == M2M_WIFI_CONNECTED) {
+			// Create socket for Rx UDP
+				printf("connection: _create and connect sock = (%d)\r\n",sock);
+				if (connect(sock, (struct sockaddr *)&addr_in, sizeof(struct sockaddr_in)) != SOCK_ERR_NO_ERROR) {
+					printf("connect error.\r\n");
+					return SOCK_ERR_INVALID;
+				}
+								/* Handle pending events from network controller. */
+								m2m_wifi_handle_events(NULL);
+				//break;
+		//}
+	//}		
+		
+		
+	//printf("connection: _create and connect sock = (%d)\r\n",sock);
+	//if (connect(sock, (struct sockaddr *)&addr_in, sizeof(struct sockaddr_in)) != SOCK_ERR_NO_ERROR) {
+	//	printf("connect error.\r\n");
+	//	return SOCK_ERR_INVALID;
+	//}
+	
+	/* while (1) {
+		//if (packetCnt2 >= MAIN_WIFI_M2M_PACKET_COUNT) {
+		if (packetCnt2) {
+			packetCnt2 = 0;
+			printf("leshan Server _create and connect tx_socket Complete!\r\n");
+			break;
+		}
+	}	*/
 
     connP = connection_new_incoming(connList, sock, (struct sockaddr *)&addr_in, sizeof(struct sockaddr_in));
     close(tx_socket);
+	
+	//printf("connection: _create and connect tx_socket = (%d)\r\n",rx_socket);
 
     return connP;	
 	
@@ -233,12 +312,24 @@ int connection_send(connection_t *connP,
         offset += nbSent;
     }
 */
+	printf("connection: _send socket = (%d), length(%d), addrlen (%d)\r\n",connP->sock, length, connP->addrLen);
 	nbSent = sendto(connP->sock, buffer , length , 0, (struct sockaddr *)&(connP->addr), connP->addrLen);	
 	if (nbSent == M2M_SUCCESS) {
 		printf("connection: message sent\r\n");
 		} else {
 		printf("connection: failed to send message error!\r\n");
 		}	
+		
+		//delay_ms(10000);
+	/* while (1) {
+		//if (packetCnt2 >= MAIN_WIFI_M2M_PACKET_COUNT) {
+		if (packetCnt2) {
+			packetCnt2 = 0;
+			printf("leshan Server send Complete!\r\n");
+			break;
+		}	
+	}*/
+		
     return 0;
 }
 

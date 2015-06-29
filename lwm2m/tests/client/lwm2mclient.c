@@ -59,6 +59,7 @@
 #include "../utils/commandline.h"
 #include "../utils/connection.h"
 #include "socket/include/socket.h"
+#include "../main.h"
 
 #include <string.h>
 #include <stdlib.h>
@@ -75,19 +76,22 @@
 #include <errno.h>
 #include <signal.h>
 
+#include "driver/include/m2m_wifi.h"
+
 /*
  * Bugfix: REST_MAX_CHUNK_SIZE is the size of the payload!
  * ensure sync with: er_coap_13.h COAP_MAX_PACKET_SIZE!
  * or internals.h LWM2M_MAX_PACKET_SIZE!
  */
-#define MAX_PACKET_SIZE 198
+//#define MAX_PACKET_SIZE 198
 
 #define	INET6_ADDRSTRLEN	46	/* max size of IPv6 address string:
 				   "xxxx:xxxx:xxxx:xxxx:xxxx:xxxx:xxxx:xxxx" or
 				   "xxxx:xxxx:xxxx:xxxx:xxxx:xxxx:ddd.ddd.ddd.ddd\0"
 				    1234567890123456789012345678901234567890123456 */
 
-
+uint32_t count = 0;
+//SOCKET rx_socket2;
 
 int g_reboot = 0;
 static int g_quit = 0;
@@ -758,7 +762,22 @@ void print_usage(void)
     fprintf(stdout, "\r\n");
 }
 
-int lwm2mclient_main()
+
+static void wait(volatile uint32_t ul_ms)
+{
+	uint32_t ul_start;
+	uint32_t ul_current;
+	printf("wait Client!\n");
+
+	ul_start = g_ul_tick_count;
+	printf("wait Client! %u\n", ul_start);
+	do {
+		ul_current = g_ul_tick_count;
+	} while (ul_current - ul_start < ul_ms);
+	printf("wait Client Complete %u!\n", ul_current);
+}
+
+int lwm2mclient_main(SOCKET sockt)
 {
     client_data_t data;
     int result;
@@ -846,7 +865,8 @@ int lwm2mclient_main()
      *This call an internal function that create an IPV6 socket on the port 5683.
      */
     fprintf(stderr, "Trying to bind LWM2M Client to port %s\r\n", localPort);
-    data.sock = create_socket(localPort);
+    //data.sock = create_socket(localPort);
+	data.sock = sockt;
     if (data.sock < 0)
     {
         fprintf(stderr, "Failed to open socket: %d\r\n", errno);
@@ -1060,6 +1080,7 @@ int lwm2mclient_main()
          *    (eg. retransmission) and the time between the next operation
          */
         result = lwm2m_step(lwm2mH, &(tv.tv_sec));
+		//printf("lwm2mclient: while counter = (%d)\r\n",count++);
         if (result != 0)
         {
             fprintf(stderr, "lwm2m_step() failed: 0x%X\r\n", result);
@@ -1073,6 +1094,13 @@ int lwm2mclient_main()
          * with the precedent function)
          */
         //result = select(FD_SETSIZE, &readfds, NULL, NULL, &tv);
+		
+		//wait(1000);
+		//cpu_delay_s(60);
+		//delay_cycles(cycles_per_ms);
+		//wait(600);
+				/* Handle pending events from network controller. */
+				m2m_wifi_handle_events(NULL);
 
         if (result < 0)
         {

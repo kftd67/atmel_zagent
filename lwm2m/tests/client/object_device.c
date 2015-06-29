@@ -112,6 +112,10 @@
 
 typedef struct
 {
+//	char manufacturer[PRV_OFFSET_MAXLEN];
+//	char model_number[PRV_OFFSET_MAXLEN];
+//	char serial_number[PRV_OFFSET_MAXLEN];
+//	char firmware_version[PRV_OFFSET_MAXLEN];
     int64_t free_memory;
     int64_t error;
     int64_t time;
@@ -592,16 +596,21 @@ lwm2m_object_t * get_object_device()
         deviceObj->closeFunc = prv_device_close;
         deviceObj->userData = lwm2m_malloc(sizeof(device_data_t));
 
+
         /*
          * Also some user data can be stored in the object with a private structure containing the needed variables 
          */
         if (NULL != deviceObj->userData)
         {
+			//strcpy(((device_data_t*)deviceObj->userData)->manufacturer, PRV_MANUFACTURER);
+			//strcpy(((device_data_t*)deviceObj->userData)->model_number, PRV_MODEL_NUMBER);
+			//strcpy(((device_data_t*)deviceObj->userData)->serial_number, PRV_SERIAL_NUMBER);
+			//strcpy(((device_data_t*)deviceObj->userData)->firmware_version, PRV_FIRMWARE_VERSION);
             ((device_data_t*)deviceObj->userData)->battery_level = PRV_BATTERY_LEVEL;
-            ((device_data_t*)deviceObj->userData)->free_memory   = PRV_MEMORY_FREE;
+			((device_data_t*)deviceObj->userData)->free_memory   = PRV_MEMORY_FREE;
             ((device_data_t*)deviceObj->userData)->error = PRV_ERROR_CODE;
             ((device_data_t*)deviceObj->userData)->time  = 1367491215;
-            strcpy(((device_data_t*)deviceObj->userData)->time_offset, "+01:00");
+			strcpy(((device_data_t*)deviceObj->userData)->time_offset, "+01:00");
         }
         else
         {

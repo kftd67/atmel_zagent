@@ -54,6 +54,7 @@
 #include <sys/time.h>
 #include "../main.h"
 
+//extern uint8_t packetCnt2;
 
 int lwm2m_PlainTextToInt64(uint8_t * buffer,
                            int length,
@@ -429,16 +430,16 @@ int _gettimeofday( struct timeval *tv, void *tzvp )
 {
 	
 //	uint64_t t = timer_gettime(time_ );  // get uptime in nanoseconds
-//	tv->tv_sec = g_ul_tick_count;  // convert to seconds
+	//tv->tv_sec = g_ul_tick_count;  // convert to seconds
+	tv->tv_sec = g_ul_tick_count/48;  // convert to seconds
 //	tv->tv_usec = ( t % 1000000000 ) / 1000;  // get remaining microseconds
-	tv->tv_sec = 0;
+//	tv->tv_sec = 0;
 //	tv->tv_usec = 0;
 	return 0;  // return non-zero for error
 	
-
 /*	uint64_t t = g_ul_tick_count;  // get uptime in milliseconds
-	tv->tv_sec = t/1000;  // convert to seconds
-	tv->tv_usec = ( t % 1000 ) ;  // get remaining microseconds
+	tv->tv_sec = t; //t/48;  // convert to seconds
+	//tv->tv_usec = ( t % 1000 ) ;  // get remaining microseconds
 	return 0;  // return non-zero for error	
 	*/
 } // end _gettimeofday()
