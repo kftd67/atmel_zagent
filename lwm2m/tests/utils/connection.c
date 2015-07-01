@@ -218,6 +218,8 @@ connection_t * connection_create(connection_t * connList,
 	struct sockaddr_in addr_in;
 	int s;
     connection_t * connP = NULL;
+	/** IP address of host. */
+	uint32_t gu32HostIp = 0;
 	
 	addr_in.sin_family = AF_INET;
 	addr_in.sin_port = _htons(MAIN_WIFI_M2M_SERVER_PORT);

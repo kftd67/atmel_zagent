@@ -31,6 +31,8 @@
 
 extern int g_reboot;
 
+
+
 /*
  * object_device.c
  */

@@ -92,6 +92,7 @@
 
 uint32_t count = 0;
 //SOCKET rx_socket2;
+//extern lwm2m_context_t * clientLwm2mH;
 
 int g_reboot = 0;
 static int g_quit = 0;
@@ -777,6 +778,9 @@ static void wait(volatile uint32_t ul_ms)
 	printf("wait Client Complete %u!\n", ul_current);
 }
 
+//client_data_t * cdata = NULL;
+lwm2m_context_t * clwm2mH = NULL;
+
 int lwm2mclient_main(SOCKET sockt)
 {
     client_data_t data;
@@ -829,6 +833,7 @@ int lwm2mclient_main(SOCKET sockt)
     };
 
     memset(&data, 0, sizeof(client_data_t));
+	//cdata = &data;
 /* Zebra change: Reddy
     while ((opt = getopt(argc, argv, "bcl:n:p:t:h:")) != -1)
     {
@@ -969,6 +974,7 @@ int lwm2mclient_main(SOCKET sockt)
      * charge of communication
      */
     lwm2mH = lwm2m_init(prv_connect_server, prv_buffer_send, &data);
+	clwm2mH = lwm2mH;
     if (NULL == lwm2mH)
     {
         fprintf(stderr, "lwm2m_init() failed\r\n");
@@ -1219,4 +1225,12 @@ int lwm2mclient_main(SOCKET sockt)
     connection_free(data.connList);
 
     return 0;
+}
+
+int lwm2mclient_handle_packet(uint8_t* gau8SocketBuffer, sint16 buffsize)
+{
+	client_data_t * dataP = clwm2mH->userData;
+	lwm2m_handle_packet(clwm2mH, gau8SocketBuffer, buffsize, dataP->connList);
+	return 0;
+	
 }
