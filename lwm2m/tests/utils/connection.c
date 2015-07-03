@@ -314,7 +314,7 @@ int connection_send(connection_t *connP,
         offset += nbSent;
     }
 */
-	printf("connection: _send socket = (%d), length(%d), addrlen (%d)\r\n",connP->sock, length, connP->addrLen);
+	printf("connection: _send socket = (%d), buffer = (%s), length(%d), addrlen (%d)\r\n",connP->sock, buffer, length, connP->addrLen);
 	nbSent = sendto(connP->sock, buffer , length , 0, (struct sockaddr *)&(connP->addr), connP->addrLen);	
 	if (nbSent == M2M_SUCCESS) {
 		printf("connection: message sent\r\n");
@@ -331,6 +331,8 @@ int connection_send(connection_t *connP,
 			break;
 		}	
 	}*/
+				/* Handle pending events from network controller. */
+				m2m_wifi_handle_events(NULL);	
 		
     return 0;
 }

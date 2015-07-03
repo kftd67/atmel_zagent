@@ -1075,9 +1075,9 @@ int lwm2mclient_main(SOCKET sockt)
         }
         tv.tv_usec = 0;
 
-        FD_ZERO(&readfds);
-        FD_SET(data.sock, &readfds);
-        FD_SET(STDIN_FILENO, &readfds);
+        //FD_ZERO(&readfds);
+        //FD_SET(data.sock, &readfds);
+        //FD_SET(STDIN_FILENO, &readfds);
 
         /*
          * This function does two things:

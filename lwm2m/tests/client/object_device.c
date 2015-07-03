@@ -64,7 +64,7 @@
 #include <ctype.h>
 #include <time.h>
 
-
+/* Zebra: Reddy change
 #define PRV_MANUFACTURER      "OMA"             // ... to fit in er_coap_h REST_MAX_CHUNK_SIZE "Open Mobile Alliance"
 #define PRV_MODEL_NUMBER      "LWM2M Client"    // dito: "Lightweight M2M Client"
 #define PRV_SERIAL_NUMBER     "345000123"
@@ -79,6 +79,22 @@
 #define PRV_MEMORY_FREE       15
 #define PRV_ERROR_CODE        0
 #define PRV_TIME_ZONE         "Europe/Berlin"
+#define PRV_BINDING_MODE      "U"
+*/
+#define PRV_MANUFACTURER      "Atmel"
+#define PRV_MODEL_NUMBER      "SAMW25Xplained"    // dito: "Lightweight M2M Client"
+#define PRV_SERIAL_NUMBER     "0200000701"
+#define PRV_FIRMWARE_VERSION  "18.3.0"
+#define PRV_POWER_SOURCE_1    1
+#define PRV_POWER_SOURCE_2    5
+#define PRV_POWER_VOLTAGE_1   3800
+#define PRV_POWER_VOLTAGE_2   5000
+#define PRV_POWER_CURRENT_1   125
+#define PRV_POWER_CURRENT_2   900
+#define PRV_BATTERY_LEVEL     100
+#define PRV_MEMORY_FREE       15
+#define PRV_ERROR_CODE        0
+#define PRV_TIME_ZONE         "India/bangalore"
 #define PRV_BINDING_MODE      "U"
 
 #define PRV_OFFSET_MAXLEN   7 //+HH:MM\0 at max

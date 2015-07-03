@@ -430,8 +430,8 @@ int _gettimeofday( struct timeval *tv, void *tzvp )
 {
 	
 //	uint64_t t = timer_gettime(time_ );  // get uptime in nanoseconds
-	//tv->tv_sec = g_ul_tick_count;  // convert to seconds
-	tv->tv_sec = g_ul_tick_count/48;  // convert to seconds
+	tv->tv_sec = g_ul_tick_count;  // convert to seconds
+	//tv->tv_sec = g_ul_tick_count/48;  // convert to seconds
 //	tv->tv_usec = ( t % 1000000000 ) / 1000;  // get remaining microseconds
 //	tv->tv_sec = 0;
 //	tv->tv_usec = 0;
