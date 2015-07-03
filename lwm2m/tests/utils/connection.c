@@ -30,37 +30,7 @@
 int create_socket(const char * portStr)
 {
 	/* Zebra change: Reddy
-    int s = -1;
-    struct addrinfo hints;
-    struct addrinfo *res;
-    struct addrinfo *p;
 
-    memset(&hints, 0, sizeof hints);
-    hints.ai_family = AF_INET;
-    hints.ai_socktype = SOCK_DGRAM;
-    hints.ai_flags = AI_PASSIVE;
-
-    //if (0 != getaddrinfo(NULL, portStr, &hints, &res))
-    //{
-    //    return -1;
-    //}
-
-    for(p = res ; p != NULL && s == -1 ; p = p->ai_next)
-    {
-        s = socket(p->ai_family, p->ai_socktype, p->ai_protocol);
-        if (s >= 0)
-        {
-            if (-1 == bind(s, p->ai_addr, p->ai_addrlen))
-            {
-                close(s);
-                s = -1;
-            }
-        }
-    }
-
-    //freeaddrinfo(res);
-
-    return s;
 	*/
 	/** Socket for Tx */
 	
@@ -70,39 +40,6 @@ int create_socket(const char * portStr)
 	addr.sin_family = AF_INET;
 	addr.sin_port = _htons(MAIN_WIFI_M2M_SERVER_PORT);
 	addr.sin_addr.s_addr = _htonl(MAIN_WIFI_M2M_SERVER_IP);	
-/*
-	// Create socket bind LWM2M Client to port .
-	// Create socket for Tx UDP
-	if ((tx_socket = socket(AF_INET, SOCK_DGRAM, 0)) < 0) {
-		printf("Connection: failed to create TX UDP client socket!\r\n");
-	}
-
-	bind(tx_socket, (struct sockaddr *)&addr, sizeof(struct sockaddr_in));
-	while (1) {
-		//if (packetCnt2 >= MAIN_WIFI_M2M_PACKET_COUNT) {
-		if (packetCnt2) {
-			packetCnt2 = 0;
-			printf("leshan Server create_socket tx_socket Complete!\r\n");
-			break;
-		}
-	}	
-	
-*/	
-
-	/* while (1) {
-		//if (packetCnt2 >= MAIN_WIFI_M2M_PACKET_COUNT) {
-		if (packetCnt2) {
-			packetCnt2 = 0;
-			printf("connection: create_socket Complete!\r\n");
-			//close(rx_socket);
-			//rx_socket = -1;
-			break;
-		}*/
-
-		//m2m_wifi_handle_events(NULL);
-
-		//if (wifi_connected == M2M_WIFI_CONNECTED) {
-			// Create socket for Rx UDP
 			if (tx_socket < 0) {
 				if ((tx_socket = socket(AF_INET, SOCK_DGRAM, 0)) < 0) {
 					printf("main : failed to create RX UDP Client socket error!\r\n");
@@ -114,10 +51,6 @@ int create_socket(const char * portStr)
 				bind(tx_socket, (struct sockaddr *)&addr, sizeof(struct sockaddr_in));
 				
 			}
-		//}
-	//}
-
-
 	printf("connection: create_socket tx_socket = (%d)\r\n",tx_socket);
 
 	return tx_socket;
@@ -169,49 +102,6 @@ connection_t * connection_create(connection_t * connList,
                                  uint16_t port)
 {
 	/* Zebra change: Reddy
-    char portStr[6];
-    struct addrinfo hints;
-    struct addrinfo *servinfo = NULL;
-    struct addrinfo *p;
-    int s;
-    struct sockaddr *sa;
-    //socklen_t sl;
-	uint16 sl;
-    connection_t * connP = NULL;
-
-    memset(&hints, 0, sizeof(hints));
-    hints.ai_family = AF_INET;
-    hints.ai_socktype = SOCK_DGRAM;
-
-    if (0 >= sprintf(portStr, "%hu", port)) return NULL;
-    //if (0 != getaddrinfo(host, portStr, &hints, &servinfo) || servinfo == NULL) return NULL;
-
-    // we test the various addresses
-    s = -1;
-    for(p = servinfo ; p != NULL && s == -1 ; p = p->ai_next)
-    {
-        s = socket(p->ai_family, p->ai_socktype, p->ai_protocol);
-        if (s >= 0)
-        {
-            sa = p->ai_addr;
-            sl = p->ai_addrlen;
-            if (-1 == connect(s, p->ai_addr, p->ai_addrlen))
-            {
-                close(s);
-                s = -1;
-            }
-        }
-    }
-    if (s >= 0)
-    {
-        connP = connection_new_incoming(connList, sock, sa, sl);
-        close(s);
-    }
-    if (NULL != servinfo) {
-        free(servinfo);
-    }
-
-    return connP;
 	*/
 	/** Socket for Tx */
 	SOCKET tx_socket = -1;
@@ -225,55 +115,13 @@ connection_t * connection_create(connection_t * connList,
 	addr_in.sin_port = _htons(MAIN_WIFI_M2M_SERVER_PORT);
 	addr_in.sin_addr.s_addr = _htonl(MAIN_WIFI_M2M_SERVER_IP);
 
-	/* Create secure socket */
-	//if (tx_socket < 0) {
-	//	tx_socket = socket(AF_INET, SOCK_DGRAM, 0);
-	//}
-
-	/* Check if socket was created successfully */
-	//if (tx_socket == -1) {
-	//	printf("socket error.\r\n");
-	//	close(tx_socket);
-	//	return -1;
-	//}
-
-	/* If success, connect to socket */
-	//if (connect(tx_socket, (struct sockaddr *)&addr_in, sizeof(struct sockaddr_in)) != SOCK_ERR_NO_ERROR) {
-		
-		
-		
-	//while (1) {
-
-		//m2m_wifi_handle_events(NULL);
-
-		//if (wifi_connected == M2M_WIFI_CONNECTED) {
-			// Create socket for Rx UDP
-				printf("connection: _create and connect sock = (%d)\r\n",sock);
-				if (connect(sock, (struct sockaddr *)&addr_in, sizeof(struct sockaddr_in)) != SOCK_ERR_NO_ERROR) {
-					printf("connect error.\r\n");
-					return SOCK_ERR_INVALID;
-				}
-								/* Handle pending events from network controller. */
-								m2m_wifi_handle_events(NULL);
-				//break;
-		//}
-	//}		
-		
-		
-	//printf("connection: _create and connect sock = (%d)\r\n",sock);
-	//if (connect(sock, (struct sockaddr *)&addr_in, sizeof(struct sockaddr_in)) != SOCK_ERR_NO_ERROR) {
-	//	printf("connect error.\r\n");
-	//	return SOCK_ERR_INVALID;
-	//}
-	
-	/* while (1) {
-		//if (packetCnt2 >= MAIN_WIFI_M2M_PACKET_COUNT) {
-		if (packetCnt2) {
-			packetCnt2 = 0;
-			printf("leshan Server _create and connect tx_socket Complete!\r\n");
-			break;
-		}
-	}	*/
+	printf("connection: _create and connect sock = (%d)\r\n",sock);
+	if (connect(sock, (struct sockaddr *)&addr_in, sizeof(struct sockaddr_in)) != SOCK_ERR_NO_ERROR) {
+			printf("connect error.\r\n");
+			return SOCK_ERR_INVALID;
+	}
+	/* Handle pending events from network controller. */
+	m2m_wifi_handle_events(NULL);
 
     connP = connection_new_incoming(connList, sock, (struct sockaddr *)&addr_in, sizeof(struct sockaddr_in));
     close(tx_socket);
@@ -306,13 +154,6 @@ int connection_send(connection_t *connP,
     int nbSent;
     size_t offset;
 /* Zebra change: Reddy
-    offset = 0;
-    while (offset != length)
-    {
-        nbSent = sendto(connP->sock, buffer + offset, length - offset, 0, (struct sockaddr *)&(connP->addr), connP->addrLen);
-        if (nbSent == -1) return -1;
-        offset += nbSent;
-    }
 */
 	printf("connection: _send socket = (%d), buffer = (%s), length(%d), addrlen (%d)\r\n",connP->sock, buffer, length, connP->addrLen);
 	nbSent = sendto(connP->sock, buffer , length , 0, (struct sockaddr *)&(connP->addr), connP->addrLen);	
@@ -322,17 +163,8 @@ int connection_send(connection_t *connP,
 		printf("connection: failed to send message error!\r\n");
 		}	
 		
-		//delay_ms(10000);
-	/* while (1) {
-		//if (packetCnt2 >= MAIN_WIFI_M2M_PACKET_COUNT) {
-		if (packetCnt2) {
-			packetCnt2 = 0;
-			printf("leshan Server send Complete!\r\n");
-			break;
-		}	
-	}*/
-				/* Handle pending events from network controller. */
-				m2m_wifi_handle_events(NULL);	
+	/* Handle pending events from network controller. */
+	m2m_wifi_handle_events(NULL);	
 		
     return 0;
 }

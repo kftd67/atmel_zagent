@@ -764,19 +764,6 @@ void print_usage(void)
 }
 
 
-static void wait(volatile uint32_t ul_ms)
-{
-	uint32_t ul_start;
-	uint32_t ul_current;
-	printf("wait Client!\n");
-
-	ul_start = g_ul_tick_count;
-	printf("wait Client! %u\n", ul_start);
-	do {
-		ul_current = g_ul_tick_count;
-	} while (ul_current - ul_start < ul_ms);
-	printf("wait Client Complete %u!\n", ul_current);
-}
 
 //client_data_t * cdata = NULL;
 lwm2m_context_t * clwm2mH = NULL;
@@ -1101,12 +1088,8 @@ int lwm2mclient_main(SOCKET sockt)
          */
         //result = select(FD_SETSIZE, &readfds, NULL, NULL, &tv);
 		
-		//wait(1000);
-		//cpu_delay_s(60);
-		//delay_cycles(cycles_per_ms);
-		//wait(600);
-				/* Handle pending events from network controller. */
-				m2m_wifi_handle_events(NULL);
+		/* Handle pending events from network controller. */
+		m2m_wifi_handle_events(NULL);
 
         if (result < 0)
         {
